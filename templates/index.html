@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Category Classification</title>
+
+  <style>
+    body {
+      background-image: url("{{ url_for('static', filename='background image.png') }}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    #outerbox {
+      margin: auto;
+      margin-top: 50px;
+      width: 420px;
+      background: rgba(15, 23, 42, 0.709);
+      border-radius: 14px;
+      padding: 25px 30px;
+      box-shadow: 0 0 10px rgba(37, 99, 235, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    h1 {
+      text-align: center;
+      color: #60a5fa;
+      margin-bottom: 6px;
+    }
+
+    p {
+      text-align: center;
+      color: #94a3b8;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .box-items {
+      margin-bottom: 12px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #c7d2fe;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      background-color: #020617;
+      color: #e5e7eb;
+      font-size: 14px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 1px #60a5fa;
+    }
+
+    #buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 18px;
+    }
+
+    button {
+      width: 48%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button[type="reset"] {
+      background-color: #1e293b;
+      color: #e5e7eb;
+    }
+
+    button[type="submit"] {
+      background: linear-gradient(to right, #3b82f6, #2563eb);
+      color: white;
+    }
+
+    button:hover {
+      transform: scale(1.02);
+    }
+
+    #pricePrediction {
+      margin-top: 20px;
+      padding: 14px;
+      border-radius: 8px;
+      background: rgba(30, 58, 138, 0.15);
+      border: 1px solid #3b82f6;
+      text-align: center;
+    }
+
+    #pricePrediction h3 {
+      margin: 0;
+      color: #93c5fd;
+      font-size: 16px;
+    }
+
+    #price {
+      display: block;
+      margin-top: 6px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #e0f2fe;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="outerbox">
+    <h1>Customer Category Classification</h1>
+    <p>Predict customer type using purchase data</p>
+
+    <form id="predictForm">
+      <div class="box-items">
+        <label for="Fresh">Fresh Products (₹)</label>
+        <input type="number" id="Fresh" required />
+      </div>
+
+      <div class="box-items">
+        <label for="milk">Milk Products (₹)</label>
+        <input type="number" id="milk" required />
+      </div>
+
+      <div class="box-items">
+        <label for="grocery">Grocery (₹)</label>
+        <input type="number" id="grocery" required />
+      </div>
+
+      <div class="box-items">
+        <label for="frozen">Frozen Products (₹)</label>
+        <input type="number" id="frozen" required />
+      </div>
+
+      <div class="box-items">
+        <label for="Detergents_Paper">Detergents & Paper (₹)</label>
+        <input type="number" id="Detergents_Paper" required />
+      </div>
+
+      <div id="buttons">
+        <button type="reset">Clear</button>
+        <button type="submit">Classify</button>
+      </div>
+    </form>
+
+    <div id="pricePrediction">
+      <h3>Prediction Result</h3>
+      <span id="price">--</span>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("predictForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const data = {
+        Fresh: document.getElementById("Fresh").value,
+        milk: document.getElementById("milk").value,
+        grocery: document.getElementById("grocery").value,
+        frozen: document.getElementById("frozen").value,
+        Detergents_Paper: document.getElementById("Detergents_Paper").value,
+      };
+
+      try {
+        const response = await fetch("/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+        document.getElementById("price").innerText = result.prediction;
+      } catch (error) {
+        document.getElementById("price").innerText = "Prediction failed";
+      }
+    });
+  </script>
+</body>
+</html>
